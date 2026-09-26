@@ -1,0 +1,87 @@
+/* Slice / midnight terminal palette. Content inside imported iframes owns its colors. */
+:root{color-scheme:dark;--ink:#e8ede9;--muted:#9aa79f;--line:#29332d;--lime:#c6ff3a;--base:#080b09;--panel:#101612;--raised:#171f1a;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+body{background:var(--base);color:var(--ink)}
+::selection{background:var(--lime);color:#080b09}
+body :is(button,input,textarea,select){color:var(--ink)}
+body button{border-color:var(--line)}
+body button:hover{background:#253129}
+body :is(button,a,input,textarea,select):focus-visible,#creator-gateway :is(button,input):focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+body :is(input,textarea,select){accent-color:var(--lime)}
+body input::placeholder,body textarea::placeholder{color:#829187;opacity:1}
+header,footer{border-color:var(--line)}
+.logo span{color:var(--lime);text-shadow:0 0 22px #c6ff3a25}
+header nav .current{border-color:var(--lime);color:var(--lime)}
+.eyebrow,.tag,.edition,.stage-top,.stage-note,.card-meta,.delivery-badge,.view-label,.preview-label,.mini-label,.app-platform,.dialog-head,.gateway-options small{font-family:var(--mono)}
+body :is(.intro p,.edition span,.tag,.feature-copy p,.byline small,.feature-foot,.stage-note,.view-label,.feed-heading small,.feed-heading>span:last-child,.card-meta,.card>p,.card-author,.card-author span,.aside-title span,.trend small,.aside-bottom,.end-note,footer span){color:var(--muted)}
+body :is(.feature,.featured-row #trending,.following-feed-card,.following-feed-empty){background:var(--panel);border-color:var(--line)}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link),body .share-actions .dark{background:var(--lime);border-color:var(--lime);color:#0b1007}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link):hover{background:#d4ff76;border-color:#d4ff76;color:#0b1007;box-shadow:0 0 20px #c6ff3a18}
+body :is(.avatar,.following-avatar,.comment-avatar,.library-mark,.slace-emblem){background:#202d23;color:var(--lime)}
+.feature-stage{background:#0b1210}
+.orbit-caption em{font-family:inherit;font-style:normal;color:var(--lime)}
+.gravity{background:#101c16c9;border-color:#354639}
+#discover>#categories button,#discover>#categories button[data-cat="Gaming"]{background:var(--panel);color:#b6c2b9;border-color:var(--line)}
+#discover>#categories button:hover{background:#202b23;border-color:#667b50}
+#discover>#categories button.selected{background:var(--lime);color:#0b1007;border-color:var(--lime)}
+.section-heading h2 span{font-family:var(--mono);font-style:normal;font-size:12px;color:var(--muted)}
+.trend{border-color:var(--line)}
+.trend>span{color:#607465;font-family:var(--mono);font-style:normal}
+.queue-entry{background:#111b13;border:1px solid #354b27}
+.queue-entry .eyebrow{color:var(--lime)}
+.queue-entry p{color:#a7b69f}
+.product-philosophy .editor-note{color:var(--ink)}
+.product-philosophy .editor-note h3 em{color:var(--lime);font-family:inherit;font-style:normal}
+/* Embedded first-party playgrounds use dark stages; creator HTML stays isolated. */
+.slice,.slice[style]{background:#151e19!important;color:#e6eee8}
+.slice.feature-stage{background:#0b1210!important}
+.slice[data-kind=beat]{background:#191626!important}
+.slice[data-kind=quiz]{background:#211e13!important}
+.slice[data-kind=wave]{background:#10231f!important}
+.slice[data-kind=draw]{background:#261a15!important}
+.slice-badge{background:#0b100dcf;color:#c3d2c7;border:1px solid #334239}
+.slice-controls button{background:#29352d;color:#e6eee8;border:1px solid #455449}
+.slice-controls button:hover{background:#3c4e40}
+.slice-controls button[style*="background"]{color:#142014}
+.city-slice{color:#e6eee8}
+.city-metrics span,.city-slice small{color:#a6b6ab}
+.city-bar{background:#293e2c}.city-bar i{background:var(--lime)}
+.memory-grid button{background:#29382e;color:#a7c796}
+.memory-grid .matched{background:#47633c;color:#fff}
+.lights-grid button{background:#202b24;border-color:#415649}
+.lights-grid .lit{background:var(--lime);box-shadow:0 0 12px #c6ff3a20}
+.reaction-target{background:#26382d;color:var(--ink)}
+.slice.signal-green{background:var(--lime)!important;color:#0b1007}
+.signal-green .reaction-target{background:#101a0ce0;color:var(--lime)}
+body .card-actions button{color:#a4b4a8}
+body .card-actions button:last-child,body .card-actions .save-work{color:var(--lime)}
+body .card-actions .liked{color:#ff8fa4}
+/* Dialogs, creator forms, and Library use the same surface hierarchy. */
+body dialog,#creator-gateway,#share-dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 24px 100px #0009}
+body dialog::backdrop,#share-dialog::backdrop{background:#010503d9;backdrop-filter:blur(7px)}
+#work-dialog{background:transparent;border:0;box-shadow:none}
+#work-dialog :is(.detail-main-card,.update-card,.updates-empty,.update-undo),#work-dialog #slice-updates :is(.updates-heading,.updates-local){background:var(--panel);border-color:var(--line)}
+body dialog p{color:var(--muted)}
+body :is(.publish-notice,.slace-publish-field,.library-summary,.library-foot,.desktop-instructions,.following-summary,.following-empty,.slace-rules,.share-summary,.queue-player,.updates-empty,#slice-update-form,.delivery-fields,.update-card){background:var(--raised);border-color:var(--line);color:var(--ink)}
+body :is(.publish-fields input,.publish-fields textarea,.publish-fields select,.share-label textarea,#slice-update-form input,#slice-update-form select,#slice-update-form textarea,#slice-comment-form textarea,.gateway-input-row input){background:#090e0b;color:var(--ink);border-color:#3b4b40}
+body :is(.publish-preview,.creation-modes button,.drop-zone,.gateway-panel,.gateway-options button,.app-download-card,.desktop-download,.update-add){background:var(--raised);color:var(--ink);border-color:var(--line)}
+body .creation-modes button[aria-pressed=true],body .gateway-options button[aria-pressed=true]{background:#203017;border-color:var(--lime);color:#e6f3dc;box-shadow:inset 0 0 0 1px #c6ff3a16}
+.gateway-options button[data-source=github]{border-color:#566c42}
+.gateway-hero em{background:var(--lime);color:#0b1007;padding:0 5px 3px}
+body .drop-zone{border-color:#627a4d}
+body .drop-zone.dragging{background:#293e1d;border-color:var(--lime)}
+body :is(.field-help,.preview-label span,.publish-preview>span,.creation-modes span,.drop-zone>span:last-of-type,.upload-empty,.delivery-fields small,.slace-publish-field small,.gateway-options span,.gateway-future,.app-download-card p,.desktop-download p,.app-platform span,.app-download-bottom>span,.app-download-note){color:var(--muted)}
+body :is(#file-info,#gateway-status,#share-feedback,.delivery-badge,.update-event){color:#b5d98d}
+body :is(#publish-error,#update-form-error,#comment-error,.form-validation){color:#ff9b8b}
+body :is(.library-summary span:last-child,.library-item span,.library-item p,.following-summary span,.following-creators small,.following-post span,.following-page-heading p,.following-byline small,.following-byline>span:last-child,.following-local-note,.following-feed-empty p,.slace-heading p,.slace-prototype,.slace-cover p,.slace-cover small,.slace-stream-title span,#slace-page aside>p,.followed-person small,.share-summary small,.share-guide p,.share-footnote,.queue-player-controls p,.updates-heading h3 small,.updates-heading p,.updates-local,.update-meta,.update-body,.discussion-top h3 small,#slice-comment-form label,.comment-submit-row small,.comment-meta time,.comment-item p,.comments-empty){color:var(--muted)}
+body :is(.runtime-empty,.prototype-note){color:var(--muted)!important}
+body :is(.gateway-compatibility,.gateway-pipeline,.gateway-footer,.library-item,.following-creators article,#full-work-panel,.discussion-top,.comment-item,.card-actions,.slace-stream-title){border-color:var(--line)}
+body :is(.runtime-meta span,.gateway-pipeline li,.update-kind,#library-entry span,.following-page-heading button span){background:#283422;color:#c7dab3}
+body :is(.library-filters button[aria-pressed=true],.slace-switch button[aria-pressed=true],.following-creators button[aria-pressed=true]){background:#2b3f1e;color:var(--lime);border-color:#617c42}
+body .slace-cover{background:#121f16!important;border-color:#354b38}
+body :is(.share-actions button,.detail-like){background:var(--raised);border-color:var(--line);color:var(--ink)}
+body .share-platforms button[aria-pressed=true]{background:#25331d;border-color:#607b43}
+body .detail-like.liked{background:#34202a;color:#ff9baf;border-color:#643949}
+body .app-download-bottom button:disabled{background:#202921;color:#a4b2a5;border-color:#344036;opacity:1}
+#toast{background:#23301e;color:#deedce;border:1px solid #58733d;box-shadow:0 8px 30px #0008}
+
+header nav{border-color:var(--line)}

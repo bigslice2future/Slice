@@ -1,0 +1,135 @@
+/* Slice / minimal light palette. Content inside imported iframes owns its colors. */
+:root{color-scheme:light;--ink:#161616;--muted:#666666;--line:#e5e5e5;--lime:#c6ff3a;--base:#ffffff;--panel:#ffffff;--raised:#f5f5f5;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+body{background:var(--base);color:var(--ink)}
+::selection{background:var(--lime);color:#f5f5f5}
+body :is(button,input,textarea,select){color:var(--ink)}
+body button{border-color:var(--line)}
+body button:hover{background:#f5f5f5}
+body :is(button,a,input,textarea,select):focus-visible,#creator-gateway :is(button,input):focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+body :is(input,textarea,select){accent-color:var(--lime)}
+body input::placeholder,body textarea::placeholder{color:#666666;opacity:1}
+header,footer{border-color:var(--line)}
+.logo span{color:var(--lime);text-shadow:0 0 22px #00000012}
+header nav .current{border-color:var(--lime);color:var(--lime)}
+.eyebrow,.tag,.edition,.stage-top,.stage-note,.card-meta,.delivery-badge,.view-label,.preview-label,.mini-label,.app-platform,.dialog-head,.gateway-options small{font-family:var(--mono)}
+body :is(.intro p,.edition span,.tag,.feature-copy p,.byline small,.feature-foot,.stage-note,.view-label,.feed-heading small,.feed-heading>span:last-child,.card-meta,.card>p,.card-author,.card-author span,.aside-title span,.trend small,.aside-bottom,.end-note,footer span){color:var(--muted)}
+body :is(.feature,.featured-row #trending,.following-feed-card,.following-feed-empty){background:var(--panel);border-color:var(--line)}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link),body .share-actions .dark{background:var(--lime);border-color:var(--lime);color:#f5f5f5}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link):hover{background:#c6ff3a;border-color:#c6ff3a;color:#f5f5f5;box-shadow:0 0 20px #00000012}
+body :is(.avatar,.following-avatar,.comment-avatar,.library-mark,.slace-emblem){background:#f5f5f5;color:var(--lime)}
+.feature-stage{background:#f5f5f5}
+.orbit-caption em{font-family:inherit;font-style:normal;color:var(--lime)}
+.gravity{background:#00000012;border-color:#d9d9d9}
+#discover>#categories button,#discover>#categories button[data-cat="Gaming"]{background:var(--panel);color:#666666;border-color:var(--line)}
+#discover>#categories button:hover{background:#f5f5f5;border-color:#d9d9d9}
+#discover>#categories button.selected{background:var(--lime);color:#f5f5f5;border-color:var(--lime)}
+.section-heading h2 span{font-family:var(--mono);font-style:normal;font-size:12px;color:var(--muted)}
+.trend{border-color:var(--line)}
+.trend>span{color:#d9d9d9;font-family:var(--mono);font-style:normal}
+.queue-entry{background:#f5f5f5;border:1px solid #f5f5f5}
+.queue-entry .eyebrow{color:var(--lime)}
+.queue-entry p{color:#666666}
+.product-philosophy .editor-note{color:var(--ink)}
+.product-philosophy .editor-note h3 em{color:var(--lime);font-family:inherit;font-style:normal}
+/* Embedded first-party playgrounds use dark stages; creator HTML stays isolated. */
+.slice,.slice[style]{background:#f5f5f5!important;color:#161616}
+.slice.feature-stage{background:#f5f5f5!important}
+.slice[data-kind=beat]{background:#f5f5f5!important}
+.slice[data-kind=quiz]{background:#f5f5f5!important}
+.slice[data-kind=wave]{background:#f5f5f5!important}
+.slice[data-kind=draw]{background:#f5f5f5!important}
+.slice-badge{background:#00000012;color:#161616;border:1px solid #f5f5f5}
+.slice-controls button{background:#f5f5f5;color:#161616;border:1px solid #d9d9d9}
+.slice-controls button:hover{background:#d9d9d9}
+.slice-controls button[style*="background"]{color:#f5f5f5}
+.city-slice{color:#161616}
+.city-metrics span,.city-slice small{color:#666666}
+.city-bar{background:#f5f5f5}.city-bar i{background:var(--lime)}
+.memory-grid button{background:#f5f5f5;color:#666666}
+.memory-grid .matched{background:#d9d9d9;color:#161616}
+.lights-grid button{background:#f5f5f5;border-color:#d9d9d9}
+.lights-grid .lit{background:var(--lime);box-shadow:0 0 12px #00000012}
+.reaction-target{background:#f5f5f5;color:var(--ink)}
+.slice.signal-green{background:var(--lime)!important;color:#f5f5f5}
+.signal-green .reaction-target{background:#00000012;color:var(--lime)}
+body .card-actions button{color:#666666}
+body .card-actions button:last-child,body .card-actions .save-work{color:var(--lime)}
+body .card-actions .liked{color:#666666}
+/* Dialogs, creator forms, and Library use the same surface hierarchy. */
+body dialog,#creator-gateway,#share-dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 24px 100px #f5f5f5}
+body dialog::backdrop,#share-dialog::backdrop{background:#00000012;backdrop-filter:blur(7px)}
+#work-dialog{background:transparent;border:0;box-shadow:none}
+#work-dialog :is(.detail-main-card,.update-card,.updates-empty,.update-undo),#work-dialog #slice-updates :is(.updates-heading,.updates-local){background:var(--panel);border-color:var(--line)}
+body dialog p{color:var(--muted)}
+body :is(.publish-notice,.slace-publish-field,.library-summary,.library-foot,.desktop-instructions,.following-summary,.following-empty,.slace-rules,.share-summary,.queue-player,.updates-empty,#slice-update-form,.delivery-fields,.update-card){background:var(--raised);border-color:var(--line);color:var(--ink)}
+body :is(.publish-fields input,.publish-fields textarea,.publish-fields select,.share-label textarea,#slice-update-form input,#slice-update-form select,#slice-update-form textarea,#slice-comment-form textarea,.gateway-input-row input){background:#f5f5f5;color:var(--ink);border-color:#d9d9d9}
+body :is(.publish-preview,.creation-modes button,.drop-zone,.gateway-panel,.gateway-options button,.app-download-card,.desktop-download,.update-add){background:var(--raised);color:var(--ink);border-color:var(--line)}
+body .creation-modes button[aria-pressed=true],body .gateway-options button[aria-pressed=true]{background:#f5f5f5;border-color:var(--lime);color:#161616;box-shadow:inset 0 0 0 1px #00000012}
+.gateway-options button[data-source=github]{border-color:#d9d9d9}
+.gateway-hero em{background:var(--lime);color:#f5f5f5;padding:0 5px 3px}
+body .drop-zone{border-color:#d9d9d9}
+body .drop-zone.dragging{background:#f5f5f5;border-color:var(--lime)}
+body :is(.field-help,.preview-label span,.publish-preview>span,.creation-modes span,.drop-zone>span:last-of-type,.upload-empty,.delivery-fields small,.slace-publish-field small,.gateway-options span,.gateway-future,.app-download-card p,.desktop-download p,.app-platform span,.app-download-bottom>span,.app-download-note){color:var(--muted)}
+body :is(#file-info,#gateway-status,#share-feedback,.delivery-badge,.update-event){color:#666666}
+body :is(#publish-error,#update-form-error,#comment-error,.form-validation){color:#666666}
+body :is(.library-summary span:last-child,.library-item span,.library-item p,.following-summary span,.following-creators small,.following-post span,.following-page-heading p,.following-byline small,.following-byline>span:last-child,.following-local-note,.following-feed-empty p,.slace-heading p,.slace-prototype,.slace-cover p,.slace-cover small,.slace-stream-title span,#slace-page aside>p,.followed-person small,.share-summary small,.share-guide p,.share-footnote,.queue-player-controls p,.updates-heading h3 small,.updates-heading p,.updates-local,.update-meta,.update-body,.discussion-top h3 small,#slice-comment-form label,.comment-submit-row small,.comment-meta time,.comment-item p,.comments-empty){color:var(--muted)}
+body :is(.runtime-empty,.prototype-note){color:var(--muted)!important}
+body :is(.gateway-compatibility,.gateway-pipeline,.gateway-footer,.library-item,.following-creators article,#full-work-panel,.discussion-top,.comment-item,.card-actions,.slace-stream-title){border-color:var(--line)}
+body :is(.runtime-meta span,.gateway-pipeline li,.update-kind,#library-entry span,.following-page-heading button span){background:#f5f5f5;color:#666666}
+body :is(.library-filters button[aria-pressed=true],.slace-switch button[aria-pressed=true],.following-creators button[aria-pressed=true]){background:#f5f5f5;color:var(--lime);border-color:#d9d9d9}
+body .slace-cover{background:#f5f5f5!important;border-color:#d9d9d9}
+body :is(.share-actions button,.detail-like){background:var(--raised);border-color:var(--line);color:var(--ink)}
+body .share-platforms button[aria-pressed=true]{background:#f5f5f5;border-color:#d9d9d9}
+body .detail-like.liked{background:#f5f5f5;color:#666666;border-color:#d9d9d9}
+body .app-download-bottom button:disabled{background:#f5f5f5;color:#666666;border-color:#f5f5f5;opacity:1}
+#toast{background:#f5f5f5;color:#161616;border:1px solid #d9d9d9;box-shadow:0 8px 30px #f5f5f5}
+
+header nav{border-color:var(--line)}
+
+/* Minimal white surfaces; lime marks only primary actions and selection. */
+body{background:#fff;color:#161616}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link){color:#111}
+body :is(.dark,.queue-entry>button,.profile,.runtime-link):hover{color:#111;box-shadow:none}
+.logo span{color:#a4d900;text-shadow:none}
+header nav .current{color:#161616}
+body :is(.avatar,.following-avatar,.comment-avatar,.library-mark,.slace-emblem){background:#f3f3f3;color:#333}
+body :is(.queue-entry,.gateway-panel,.publish-preview,.app-download-card,.slace-cover){background:#fafafa!important;border-color:#e5e5e5}
+body :is(.queue-entry .eyebrow,.product-philosophy .editor-note h3 em,.card-actions button:last-child,.card-actions .save-work,.gateway-hero em){color:#161616;background:transparent}
+body .gateway-hero em{padding:0}
+body :is(.creation-modes button[aria-pressed=true],.gateway-options button[aria-pressed=true]){background:#fff;color:#111;border-color:#111;box-shadow:inset 3px 0 var(--lime)}
+body dialog::backdrop{background:#0006;backdrop-filter:blur(3px)}
+body :is(input,textarea,select){background:#fff;color:#161616}
+body input::placeholder,body textarea::placeholder{color:#777}
+body :is(#publish-error,#update-form-error,#comment-error,.form-validation){color:#a12a20}
+body :is(#file-info,#gateway-status,#share-feedback,.delivery-badge,.update-event){color:#555}
+body .discovery-search,body .search-empty{background:#fff;border-color:#ddd}
+body .discovery-search label>span:first-child,body .search-empty>span{color:#555}
+body #search-status{color:#666}
+body .feature-stage{background:#f6f6f6}
+body .orbit-caption em{color:#161616}
+body .gravity{background:#ffffffdd;border-color:#ddd}
+body .slice,body .slice[style]{background:#f5f5f5!important;color:#161616}
+body .slice.feature-stage{background:#f6f6f6!important}
+body .slice-controls button{color:#161616;background:#fff;border-color:#ccc}
+body .slice-badge{background:#fffffff0;color:#555;border-color:#ddd}
+body .city-slice{color:#161616}
+body .lights-grid .lit{background:var(--lime)}
+body .slice.signal-green{background:var(--lime)!important}
+body .signal-green .reaction-target{color:#111;background:#fff}
+body .gateway-options button[data-source=github]{border-width:1px}
+.project-section-title{font-size:15px;margin:8px 0 14px;font-weight:600}
+.project-settings{margin:22px 0;border-top:1px solid var(--line);padding-top:18px}
+.project-settings summary{cursor:pointer;font-weight:600;font-size:15px}
+.project-settings .delivery-fields{margin-top:16px;border:0;padding:0;background:transparent}
+#publish-dialog .publish-grid{align-items:start}
+#publish-dialog .publish-fields{min-width:0}
+#publish-dialog .publish-preview{position:sticky;top:0}
+#publish-dialog #file-section{margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+@media(max-width:700px){#publish-dialog .publish-preview{position:static}}
+#discover>#categories button.selected{color:#111}
+body :is(.library-filters button[aria-pressed=true],.slace-switch button[aria-pressed=true],.following-creators button[aria-pressed=true]){color:#111;background:var(--lime);border-color:var(--lime)}
+body .memory-grid .matched{color:#111}
+body .publish-fields :is(input,textarea,select){background:#fff;color:#161616;border-color:#ddd}
+body .logo span{color:var(--lime)}
+body :is(.feature-stage,.orbit-caption,.gravity){color:#161616}
+body :is(.stage-top,.stage-note,.trend>span){color:#666}

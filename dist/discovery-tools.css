@@ -1,0 +1,11 @@
+.discovery-search{display:flex;align-items:center;gap:12px;margin-top:24px;padding:13px 17px;border:1px solid #35483b;border-radius:9px;background:#101612}
+.discovery-search:focus-within{border-color:var(--lime);box-shadow:0 0 0 2px #c6ff3a0b}
+.discovery-search label>span:first-child{font-size:27px;line-height:1;color:var(--lime)}
+.search-label{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.discovery-search input{min-width:0;flex:1;background:transparent;border:0;font:inherit;font-size:14px;outline:none!important}
+#search-status{font:11px ui-monospace,monospace;color:#a1b6a8;white-space:nowrap}
+.discovery-search button{padding:5px 10px;font-size:12px}
+.search-empty{grid-column:1/-1;padding:55px 24px;text-align:center;border:1px dashed var(--line);border-radius:10px;background:#101612}
+.search-empty>span{color:var(--lime);font-size:40px}.search-empty p{color:var(--muted)}
+#card-walkable-city .slice{height:380px}
+@media(max-width:600px){.discovery-search{gap:8px;flex-wrap:wrap;padding:10px 12px;margin-top:16px}.discovery-search input{font-size:13px}#search-status:not(:empty){width:100%;padding-left:28px}#card-walkable-city .slice{height:370px}}

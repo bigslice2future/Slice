@@ -1,0 +1,19 @@
+Luma One Desk Lamp Manual (fictional demo product)
+
+Features: Luma One is a reading lamp with three brightness levels and three color temperatures. The lamp head tilts and the base has touch controls.
+
+Brightness and color: Tap power to switch the lamp on or off. Tap brightness to cycle through low, medium, and high. Hold brightness for two seconds to switch between warm, natural, and cool light.
+
+Power and wireless use: Connect the included USB-C cable to a 5V / 2A adapter. There is no battery. The lamp must stay plugged in and cannot work wirelessly.
+
+Timer: Hold power and brightness for three seconds. Two flashes confirm a 30-minute auto-off timer. Repeat to cancel.
+
+Care: Switch off and unplug before wiping with a soft, dry cloth. Do not rinse or use alcohol or abrasive cleaners. For dry indoor use only.
+
+Troubleshooting: If the lamp does not light, check the USB-C connection and power adapter. Try another compatible 5V / 2A supply. Do not open the base.
+
+Warranty: One year of limited coverage from purchase, with proof of purchase. Accidental damage, water damage, and unauthorized disassembly are excluded.
+
+In the box: One desk lamp, one USB-C cable, and one quick-start guide. Power adapter not included.
+
+Demo notice: This product, its specifications, and its warranty are fictional and only demonstrate an interactive document experience.

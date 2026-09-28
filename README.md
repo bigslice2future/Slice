@@ -1,6 +1,6 @@
 # Slice
 
-A web-first platform for interactive content and playable experiences. The current version is a static front-end prototype with local publishing and Library storage. Accounts, public publishing, and cloud sync are not connected yet.
+A web-first platform for interactive content and playable experiences. The static frontend supports local publishing and guest Library storage, with Supabase email-link accounts and cloud saves for built-in experiences. See [account setup and rollout checks](docs/ACCOUNTS.md) before enabling this in production. Public publishing is not connected yet.
 
 ## Run locally
 
@@ -14,6 +14,7 @@ Open http://localhost:4173. The files in `dist/` are both the source and the dep
 
 ```sh
 node scripts/check.cjs
+node scripts/account-check.cjs
 ```
 
 For browser regression checks, make Playwright available, start the static server, and run:

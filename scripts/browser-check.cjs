@@ -37,10 +37,13 @@ const url=process.env.SLICE_TEST_URL||'http://127.0.0.1:4193/';
  await page.locator('#card-orbit [data-save]').click();await page.locator('#library-entry').click();assert.equal(await page.locator('.library-item').count(),1);await page.locator('[data-close-library]').first().click();
  await page.locator('#following-link').click();await english();await page.locator('[data-demo-following]').click();assert((await page.locator('.following-feed-card').count())>0);await english();
  await page.locator('header nav a[href="#discover"]').click();await page.locator('.profile').click();await english();
+ await expect(page.locator('#account-dialog')).toBeVisible();
+ await expect(page.locator('#account-email')).toBeVisible();
+ await page.locator('[data-account-close]').click();
  await page.locator('#card-orbit [data-share]').click();await english();await page.locator('#close-share').click();
  await page.locator('#slace-link').click();await page.locator('[data-slace-join]').click();await page.locator('[data-slace-publish]').click();await page.locator('#gateway-template').click();assert.equal(await page.locator('[name="slaceDestination"]').inputValue(),'everyday');await page.locator('#close-publish').click();
  await page.locator('header nav a[href="#discover"]').click();
- console.log('PASS: Library, following, profile notice, share, and Space publishing destination');
+ console.log('PASS: Library, following, account dialog, share, and Space publishing destination');
  // GitHub/URL checks are honest placeholders, with English validation.
  await page.locator('#publish-entry').click();await page.locator('#gateway-source-form [type="submit"]').click();assert((await page.locator('.form-validation').innerText()).includes('Complete'));
  await page.locator('#gateway-source-url').fill('https://github.com/example/playground');await page.locator('#gateway-source-form [type="submit"]').click();assert((await page.locator('#gateway-status').innerText()).includes('not connected'));

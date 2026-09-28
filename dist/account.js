@@ -3,7 +3,7 @@
   const profile = document.querySelector('header .profile');
   const panel = document.createElement('dialog'); panel.id = 'account-dialog';
   panel.setAttribute('aria-labelledby', 'account-title');
-  panel.innerHTML = `<div class="dialog-head"><span>YOUR SLICE ACCOUNT</span><button type="button" data-account-close aria-label="Close account">✕</button></div><h2 id="account-title">Keep your discoveries.</h2><p id="account-description">Sign in with an email link. New here? The same link creates your account.</p><form id="account-form"><label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com"><button class="dark" type="submit">Email me a sign-in link</button></form><section id="account-signed-in" hidden><p>Signed in as <strong id="account-identity"></strong></p><button type="button" id="account-sign-out">Sign out on this device</button></section><p id="account-status" role="status" aria-live="polite"></p><p class="account-note">Cloud sync currently covers published demo experiences. Uploaded projects and guest saves stay on this browser. Signing in does not upload them.</p>`;
+  panel.innerHTML = `<div class="dialog-head"><span>YOUR SLICE ACCOUNT</span><button type="button" data-account-close aria-label="Close account">✕</button></div><h2 id="account-title">Keep your discoveries.</h2><p id="account-description">Sign in with an email link. New here? The same link creates your account.</p><form id="account-form"><label for="account-email">Email address</label><input id="account-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com"><button class="dark" type="submit">Email me a sign-in link</button></form><section id="account-signed-in" hidden><p>Signed in as <strong id="account-identity"></strong></p><button type="button" id="account-sign-out">Sign out on this device</button></section><p id="account-status" role="status" aria-live="polite"></p><p class="account-note">Sign in to publish URL experiences publicly and sync your Library. Existing local drafts and guest saves stay in this browser.</p>`;
   document.body.append(panel);
   const status = panel.querySelector('#account-status'), form = panel.querySelector('form');
   let client, store, user = null, authBusy = false, lastSent = 0;
@@ -27,7 +27,7 @@
     originalLibrary();
     const summary = libraryDialog.querySelector('.library-summary span:last-child');
     const foot = libraryDialog.querySelector('.library-foot p');
-    summary.textContent = !store?.userId ? 'Saved on this browser' : store.phase === 'ready' ? 'Cloud Library · Local uploads stay on this browser' : store.phase === 'saving' ? 'Saving to your account…' : store.phase === 'loading' ? 'Loading your Cloud Library…' : store.error;
+    summary.textContent = !store?.userId ? 'Saved on this browser' : store.phase === 'ready' ? 'Cloud Library · Public experiences sync across devices' : store.phase === 'saving' ? 'Saving to your account…' : store.phase === 'loading' ? 'Loading your Cloud Library…' : store.error;
     foot.textContent = 'Saving does not purchase, download, or install an experience. Uploaded projects stay on this browser.';
     const action = document.createElement('button'); action.type = 'button';
     if (!store?.userId) { action.textContent = 'Sign in for cloud saves'; action.onclick = openAccount; }
@@ -51,6 +51,7 @@
   try {
     const config = window.SLICE_ACCOUNT_CONFIG;
     client = window.supabase.createClient(config.url, config.publishableKey);
+    window.SliceAccount={client,open:openAccount};
     store = new CloudLibraryStore({
       async list(owner){
         const all = []; let offset = 0;
@@ -103,6 +104,7 @@
       catch (_) { message('Could not sign out. Please try again.'); }
       finally {authBusy=false;}
     };
+    window.addEventListener('slice-cloud-loaded',()=>{if(store.userId && !['loading','saving'].includes(store.phase))void store.reload();});
     window.addEventListener('focus',()=>{if(store.userId && !['loading','saving'].includes(store.phase)) void store.reload();});
     window.addEventListener('storage',event=>{if(event.key==='slice-library-v1'){const saved=readStored('slice-library-v1',[]);guestIds=new Set(Array.isArray(saved)?saved.filter(x=>typeof x==='string'):[]);refreshViews();}});
   } catch (_) {

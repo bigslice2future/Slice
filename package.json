@@ -1,0 +1,1 @@
+{"name":"slice","version":"0.1.0","private":true,"scripts":{"dev":"node scripts/dev.cjs","build":"node scripts/check.cjs","test":"node --test tests/*.test.cjs","check":"node scripts/check.cjs && node scripts/account-check.cjs"},"engines":{"node":">=22"},"dependencies":{"ipaddr.js":"2.2.0","parse5":"7.3.0"}}

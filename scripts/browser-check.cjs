@@ -44,35 +44,45 @@ const url=process.env.SLICE_TEST_URL||'http://127.0.0.1:4193/';
  await page.locator('#slace-link').click();await page.locator('[data-slace-join]').click();await page.locator('[data-slace-publish]').click();await page.locator('#gateway-template').click();assert.equal(await page.locator('[name="slaceDestination"]').inputValue(),'everyday');await page.locator('#close-publish').click();
  await page.locator('header nav a[href="#discover"]').click();
  console.log('PASS: Library, following, account dialog, share, and Space publishing destination');
- // GitHub/URL checks are honest placeholders, with English validation.
- await page.locator('#publish-entry').click();await page.locator('#gateway-source-form [type="submit"]').click();assert((await page.locator('.form-validation').innerText()).includes('Complete'));
- await page.locator('#gateway-source-url').fill('https://github.com/example/playground');await page.locator('#gateway-source-form [type="submit"]').click();assert((await page.locator('#gateway-status').innerText()).includes('not connected'));
- await page.locator('[data-source="url"]').click();await page.locator('#gateway-source-url').fill('http://example.com');await page.locator('#gateway-source-form [type="submit"]').click();assert((await page.locator('#gateway-status').innerText()).includes('HTTPS'));
- await page.locator('[data-source="upload"]').click();await page.locator('#gateway-open-upload').click();
- // Reject image/text/static HTML through the actual file picker handler.
- for(const [name,contents] of [['photo.png','fake image'],['note.txt','A static note'],['static.html','<h1>Static text</h1><img src="x">']]){
-   await page.locator('#work-file').setInputFiles({name,mimeType:'application/octet-stream',buffer:Buffer.from(contents)});
-   await page.waitForFunction(()=>document.querySelector('#publish-error').textContent.length>0);
-   assert.equal(await page.locator('#publish-slice iframe').count(),0);
- }
- await page.locator('#load-example').click();
- await page.locator('#publish-form [type="submit"]').click();assert((await page.locator('#publish-error').innerText()).includes('confirm'));
- const frame=page.frameLocator('#publish-slice iframe');await frame.getByRole('button',{name:'Change the mood'}).click();await frame.locator('#answer').filter({hasNotText:'Tap to discover a new mood.'}).waitFor();
- await page.locator('#confirm-playable').check();await page.locator('#publish-form [type="submit"]').click();
+ // URL Import V1: real API fetch, isolated preview, explicit confirm and durable publish.
+ await page.locator('#publish-entry').click();
+ await expect(page.locator('#gateway-unavailable')).toContainText('Coming soon');
+ await expect(page.locator('#gateway-source-form')).toBeHidden();
+ await page.locator('[data-source="upload"]').click();
+ await expect(page.locator('#gateway-unavailable')).toContainText('not available yet');
+ await page.locator('[data-source="url"]').click();
+ await page.locator('#gateway-source-url').fill('http://example.com');await page.locator('#gateway-source-form [type="submit"]').click();await expect(page.locator('#gateway-status')).toContainText('HTTPS');
+ await page.locator('#gateway-source-url').fill('https://127.0.0.1');await page.locator('#gateway-source-form [type="submit"]').click();await expect(page.locator('#gateway-status')).toContainText('Private');
+ await expect(page.locator('#gateway-copy-fix')).toBeVisible();
+ await page.locator('#gateway-source-url').fill(process.env.SLICE_IMPORT_URL||'https://mdn.github.io/learning-area/javascript/building-blocks/events/random-color-addeventlistener.html');
+ await page.locator('#gateway-source-form [type="submit"]').click();
+ await expect(page.locator('#gateway-ready')).toBeVisible({timeout:15000});
+ assert.equal(await page.locator('#gateway-preview iframe').getAttribute('sandbox'),'allow-scripts');
+ await expect(page.locator('#gateway-publish')).toBeDisabled();
+ const frame=page.frameLocator('#gateway-preview iframe');const beforeColor=await frame.locator('body').evaluate(el=>el.style.backgroundColor);await frame.getByRole('button',{name:/Change (color|the mood)/}).click();assert.notEqual(await frame.locator('body').evaluate(el=>el.style.backgroundColor),beforeColor);
+ const previewFrame=await (await page.locator('#gateway-preview iframe').elementHandle()).contentFrame();
+ assert(await previewFrame.evaluate(()=>{try{void parent.document;return false}catch{return true}}));
+ assert(await previewFrame.evaluate(async()=>{try{await fetch('https://example.com');return false}catch{return true}}));
+ assert(await previewFrame.evaluate(async()=>{try{await navigator.serviceWorker.register('/sw.js');return false}catch{return true}}));
+ await page.locator('#gateway-title').fill('Imported color playground');
+ await page.locator('#gateway-confirm').check();await page.locator('#gateway-publish').click();
  assert.equal(await page.locator('#feed .card').count(),13);
- const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('slice-local-works-v1')));
- assert.equal(stored[0].contentType,'interactive');assert.equal(stored[0].assetType,'html');
+ const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('slice-import-repository-v1')));
+ assert.equal(stored.slices.length,1);assert.equal(stored.slice_sources[0].source_type,'url');assert.equal(stored.slice_versions[0].version,1);
+ const importedId=stored.slices[0].id;
  await page.reload();assert.equal(await page.locator('#feed .card').count(),13);
- console.log('PASS: English import validation, static/image/text rejection, preview confirmation, interactive publish and reload');
+ await page.locator('#card-'+importedId+' [data-open]').click();await page.frameLocator('#dialog-stage iframe').getByRole('button',{name:/Change (color|the mood)/}).click();await page.locator('#close-dialog').click();
+ await page.locator('#card-'+importedId+' [data-save]').click();await page.locator('#library-entry').click();await expect(page.locator('#library-dialog')).toContainText('Imported color playground');await page.locator('[data-library-open="'+importedId+'"]').click();await expect(page.locator('#dialog-stage iframe')).toBeVisible();await page.locator('#close-dialog').click();
+ console.log('PASS: real HTTPS import, private URL rejection, opaque sandbox, network/service-worker denial, Preview/Confirm/Publish, reload and Library replay');
  // Template draft and publishing remain playable.
  await page.locator('#publish-entry').click();await page.locator('#gateway-template').click();
- await page.locator('[name="title"]').fill('My orbit experiment');await page.locator('#publish-form [name="description"]').fill('Adjust gravity.');await page.locator('[name="template"]').selectOption('orbit');await page.locator('#save-draft').click();await page.locator('#close-publish').click();
- await page.locator('#publish-entry').click();await page.locator('#gateway-draft').click();assert.equal(await page.locator('[name="title"]').inputValue(),'My orbit experiment');await page.locator('#publish-form [type="submit"]').click();assert.equal(await page.locator('#feed .card').count(),14);
+ await page.locator('#publish-form [name="title"]').fill('My orbit experiment');await page.locator('#publish-form [name="description"]').fill('Adjust gravity.');await page.locator('[name="template"]').selectOption('orbit');await page.locator('#save-draft').click();await page.locator('#close-publish').click();
+ await page.locator('#publish-entry').click();await page.locator('#gateway-draft').click();assert.equal(await page.locator('#publish-form [name="title"]').inputValue(),'My orbit experiment');await page.locator('#publish-form [type="submit"]').click();assert.equal(await page.locator('#feed .card').count(),14);
  // Seed legacy data in this isolated test browser. Verify it stays archived and is not destroyed.
  const legacy={id:'local-legacy',template:'beat',cat:'Creative',title:'Old image post',desc:'Static',author:'Legacy',bg:'#ffffff',assetType:'image',asset:'data:image/png;base64,AA=='};
  await page.evaluate(legacy=>{const list=JSON.parse(localStorage.getItem('slice-local-works-v1'));localStorage.setItem('slice-local-works-v1',JSON.stringify([...list,legacy,{...legacy,id:'local-static',assetType:'html',asset:'<p>Static text</p>'}]));localStorage.setItem('slice-plain-posts-v1',JSON.stringify([{id:'post-old',title:'Old text post',desc:'Text',author:'Legacy',media:[]}]));localStorage.setItem('slice-publish-draft-v1',JSON.stringify(legacy));},legacy);
  await page.reload();assert.equal(await page.locator('#feed .card').count(),14);assert.equal(await page.locator('#card-local-legacy, #card-local-static, #card-post-old').count(),0);
- await page.locator('#publish-entry').click();await page.locator('#gateway-draft').click();assert((await page.locator('#publish-error').innerText()).includes('older draft'));await page.locator('[name="title"]').fill('Another playable idea');await page.locator('#publish-form [name="description"]').fill('Catch the beat.');await page.locator('#publish-form [type="submit"]').click();
+ await page.locator('#publish-entry').click();await page.locator('#gateway-draft').click();assert((await page.locator('#publish-error').innerText()).includes('older draft'));await page.locator('#publish-form [name="title"]').fill('Another playable idea');await page.locator('#publish-form [name="description"]').fill('Catch the beat.');await page.locator('#publish-form [type="submit"]').click();
  assert(await page.evaluate(()=>JSON.parse(localStorage.getItem('slice-local-works-v1')).some(w=>w.id==='local-legacy')));
  assert(await page.evaluate(()=>localStorage.getItem('slice-plain-posts-v1')!==null));
  await page.goto(url+'?create=image');assert(await page.locator('#creator-gateway').isVisible());assert.equal(await page.locator('[data-mode="image"]').count(),0);await page.locator('#creator-gateway [data-close]').click();

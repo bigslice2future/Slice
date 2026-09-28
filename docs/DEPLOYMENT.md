@@ -1,16 +1,17 @@
-# 首次部署：Vercel
+# Vercel deployment — Creator Import V1
 
-此配置仅准备部署，不表示项目已经上线。当前没有数据库或环境变量依赖。
+Use the repository root containing package.json, api/, server/ and dist/. Framework preset: **Other**. Build command: **npm run build** (or pnpm build). Output directory: **dist**. Node version: **22.x or 24.x**. Install dependencies from pnpm-lock.yaml. Clear any old dashboard override that leaves Build Command empty. The api/import/url.js Node function is deployed alongside the static site and has maxDuration 15 seconds; its own import deadline is 8 seconds.
 
-1. 在 GitHub 审阅并合并初始化 PR。
-2. 登录 https://vercel.com/new ，连接 GitHub 并导入 `bigslice2future/Slice`。
-3. Root Directory 保持仓库根目录，Framework Preset 选择 Other。仓库配置指定 Output Directory 为 `dist`，Build Command 为空（无需构建）。
-4. 点击 Deploy，记录生成的访问地址。生产分支使用 `main`。
-5. 在电脑与手机验收：首页、分类、引力滑块、作品打开/关闭、分享链接、收藏、发布本机作品、刷新后的本机保存、示例 HTML 上传、文档导入。
-6. 在另一浏览器打开链接验证访问；本机发布的作品不会出现在另一浏览器，这是此阶段的已知限制。
+Vercel supports root `api/*.js` Node functions without a framework: https://vercel.com/docs/functions/runtimes/node-js . Configuration: https://vercel.com/docs/project-configuration/vercel-json . No Next.js conversion or build worker is needed for this version.
 
-后续 PR 可使用 Vercel 预览部署进行验收。若新版本异常，在 Vercel 部署记录中选择此前成功版本回滚，并在 GitHub 修复对应变更。
+## Cloud publication
 
-上线真实账号前：接入 Supabase Auth、作品与收藏数据、按用户限制写入的 RLS 策略，并验证用户之间不能修改对方的数据。上传 HTML 继续独立沙箱运行，不可与登录主站共享权限；服务端密钥不得放入 `dist/` 或 GitHub。
+Apply `supabase/migrations/202609280001_import_platform.sql`, then `202609280002_public_publish.sql`. Existing account tables remain unchanged. Deploy `supabase/functions/publish-slice/index.ts` as the `publish-slice` Edge Function. It uses Supabase's built-in SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY; no service key belongs in Vercel or frontend configuration. Keep JWT verification enabled. The existing public account-config.js selects the project.
 
-官方参考：https://vercel.com/docs/project-configuration 、https://vercel.com/docs/builds/configure-a-build
+The production origin is https://slice-jade.vercel.app. Update the Edge Function's CORS origin and fixed acquisition endpoint if moving domains. Auth Site URL and allowed redirects must include the production origin. Email delivery for general users requires configured Supabase SMTP (see ACCOUNTS.md).
+
+Deploy the feature branch and verify the Vercel build before production promotion. Test `/api/import/url` returns JSON. On production, sign in, import a public self-contained HTML URL, preview, confirm, and publish. Open the published Slice from another browser to verify public reads. Localhost keeps the local repository for development.
+
+Configure platform rate limits/abuse monitoring before a broad launch. Cloud publication is authenticated, re-acquires and hashes the source, and limits each account to 20 publications per day and 100 total. GitHub requires an isolated worker; ZIP requires object storage and validation. Neither is enabled.
+
+Deployment progress, 2026-09-28: both import/publication SQL migrations executed successfully in the Slice project. Edge Function and Vercel release still pending verification.

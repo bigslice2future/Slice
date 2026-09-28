@@ -1,22 +1,25 @@
 # Slice
 
-A web-first platform for interactive content and playable experiences. The current version is a static front-end prototype with local publishing and Library storage. Accounts, public publishing, and cloud sync are not connected yet.
+A web-first platform for interactive content and playable experiences. The static frontend supports local publishing and guest Library storage, with Supabase email-link accounts and cloud saves for built-in experiences. See [account setup and rollout checks](docs/ACCOUNTS.md) before enabling this in production. Production publication uses a verified Supabase Edge Function and normalized versioned records; see the deployment guide for setup.
 
 ## Run locally
 
 ```sh
-python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-Open http://localhost:4173. The files in `dist/` are both the source and the deployable site. No dependency installation or compilation is required. Vercel serves `dist/` directly.
+Open http://localhost:4173. The files in `dist/` remain the frontend source and output. The Node server also runs the real URL import API; Vercel serves the same API as a function. Use Node 22/24. See [Creator Import V1](docs/URL_IMPORT_V1.md) and [deployment](docs/DEPLOYMENT.md).
 
 ## Verify
 
 ```sh
-node scripts/check.cjs
+pnpm build
+pnpm test
+pnpm check
 ```
 
-For browser regression checks, make Playwright available, start the static server, and run:
+For browser regression checks, make Playwright available, start the Node server, and run:
 
 ```sh
 SLICE_TEST_URL=http://127.0.0.1:4173/ node scripts/browser-check.cjs
@@ -27,8 +30,9 @@ Set `BROWSER_EXECUTABLE` if using an installed Chromium/Chrome executable instea
 ## Product scope
 
 - Playable experiences only: games, simulations, experiments, creative tools, and interactive applications.
-- Creator Gateway prioritizes GitHub, followed by local HTML and URL import. GitHub and URL flows currently validate addresses only; they do not import, build, or publish remote projects.
-- Local publishing accepts six playable templates or one self-contained interactive HTML file up to 300 KB. Creators must test imported previews before publishing.
+- Creator Gateway prioritizes GitHub (Coming soon), followed by real URL import and Upload Project (Coming soon). URL imports receive server-side security checks and an isolated preview before explicit creator confirmation.
+- Local publication uses a normalized browser repository. Imported Slices appear in Discover, can be saved to Library and replayed after refresh. Production uses authenticated cloud publication and a public Discover feed.
+- GitHub builds and ZIP/local-file acquisition are disabled. Six playable templates and existing drafts remain available.
 - Standalone image, text, document, and video posts are not supported. Images and text can still be assets inside an interactive experience.
 - All built-in product copy and demo content are English. User-authored titles, comments, updates, and imported projects retain their original language.
 

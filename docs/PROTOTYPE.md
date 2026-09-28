@@ -1,3 +1,5 @@
+> Historical prototype notes. For the current URL import, disabled upload entry and persistence model, see [Creator Import V1](URL_IMPORT_V1.md).
+
 # Slice prototype
 
 Slice publishes interactive content and playable experiences. The existing slice* identity, colors, cards, and runtime sandbox are retained.

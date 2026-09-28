@@ -16,3 +16,9 @@ for(const [,file] of html.matchAll(/(?:src|href)="([^"#]+\.(?:js|css)(?:\?[^"#]*
 for(const removed of ['posts.js','daily.js','generate.js'])assert(!fs.existsSync(path.join(dist,removed)),`Deprecated publishing module still shipped: ${removed}`);
 assert.equal(JSON.parse(fs.readFileSync(path.join(root,'vercel.json'))).outputDirectory,'dist');
 console.log(`PASS: ${files.length} source files checked; JavaScript syntax, English UI source, script/style references, retired post modules, and static deployment config.`);
+// Verify the Node function and its shared acquisition pipeline as well as the static UI.
+for (const folder of ['api','server','scripts','tests']) {
+ function visit(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())visit(file);else if(/\.(cjs|js)$/.test(entry.name)){const result=spawnSync(process.execPath,['--check',file],{encoding:'utf8'});assert.equal(result.status,0,result.stderr);}}}
+ visit(path.join(root,folder));
+}
+console.log('PASS: API, shared server pipeline, dev server and test script syntax.');

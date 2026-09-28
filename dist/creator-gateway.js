@@ -1,92 +1,65 @@
-// Source adapters stay separate from the existing local Slice editor.
 (() => {
-  const futureSources = ['Create with AI', 'Remix Existing Slice', 'Connect Creator Tool'];
-  const gateway = document.createElement('dialog');
-  gateway.id = 'creator-gateway';
-  gateway.setAttribute('aria-labelledby', 'gateway-heading');
-  gateway.innerHTML = `
-    <div class="dialog-head"><span>slice✳ / CREATOR GATEWAY</span><button type="button" data-close aria-label="Close Creator Gateway">✕</button></div>
-    <div class="gateway-hero"><span class="eyebrow">YOUR TOOLS. YOUR IDEAS. YOUR SLICE.</span><h2 id="gateway-heading">Made anywhere.<br><em>Playable here.</em></h2><p>Create with the tools you love. Bring interactive experiences to slice* for everyone to play.</p></div>
-    <div class="gateway-options" role="group" aria-label="Project source">
-      <button type="button" data-source="github" aria-pressed="true"><small>01 / RECOMMENDED</small><strong>Import from GitHub ↗</strong><span>Start with a playable web repository</span></button>
-      <button type="button" data-source="upload" aria-pressed="false"><small>02 / LOCAL PROJECT</small><strong>Upload Project</strong><span>Bring a self-contained HTML experience</span></button>
-      <button type="button" data-source="url" aria-pressed="false"><small>03 / ALREADY ONLINE</small><strong>Import from URL</strong><span>Connect an experience already online</span></button>
-    </div>
-    <section class="gateway-panel" aria-labelledby="gateway-source-title"><h3 id="gateway-source-title">Import from GitHub</h3>
-      <form id="gateway-source-form"><label for="gateway-source-url">GitHub Repository URL</label><div class="gateway-input-row"><input id="gateway-source-url" type="url" required placeholder="https://github.com/you/interactive-project"><button class="dark" type="submit">Check repository URL →</button></div><p id="gateway-source-help">Paste a repository URL. URL checks are available now; repository access, framework detection, and remote builds are not connected yet.</p></form>
-      <div id="gateway-upload" hidden><p>Publish playable experiences only. Import one self-contained HTML file with working interactions, up to 300 KB. Images and text may be part of an experience, but cannot be published on their own. ZIP and project-folder imports are not available yet.</p><button type="button" class="dark" id="gateway-open-upload">Choose interactive HTML →</button></div>
-      <p id="gateway-status" role="status" aria-live="polite"></p>
-    </section>
-    <details class="gateway-compatibility" open><summary>Web-based interactive projects · Initial scope</summary><p>Static HTML/CSS/JS · React/Vite · Three.js · WebGL · Canvas · p5.js</p><p>Projects must produce static web output. Arbitrary backends, Docker, Python servers, and system access are not supported.</p><p>These are the planned GitHub import formats. Local previews currently run self-contained HTML only, without external dependencies or builds.</p></details>
-    <details class="gateway-pipeline"><summary>From your project to a Slice</summary><ol>${['Repository/Project','Detect','Validate/Build','Static Output','Sandbox Runtime','Slice'].map(s=>`<li>${s}</li>`).join('')}</ol><p>This describes the planned import flow. No remote task has started. URL imports will need embed validation; a link is not converted into static files.</p></details>
-    <div class="gateway-future"><span>Future sources</span><p>${futureSources.join(' · ')}</p></div>
-    <div class="gateway-footer"><span>Continue a playable draft or try a template.</span><button type="button" id="gateway-draft">Continue local draft</button><button type="button" id="gateway-template">Try a playable template</button></div>`;
+  const prompt='Create a Slice-ready browser-only interactive experience using HTML/CSS/JS or React + Vite with a static build. For URL Import V1 export a single self-contained HTML file with inline CSS/JS and embedded data: images. No backend, DB, login or private API keys. Avoid external network, scripts, iframes, service workers, popups and navigation. Make it responsive; the main interaction must work immediately. Deploy to a public HTTPS URL returning HTML.';
+  const gateway=document.createElement('dialog');gateway.id='creator-gateway';gateway.setAttribute('aria-labelledby','gateway-heading');
+  gateway.innerHTML=`<div class="dialog-head"><span>slice✳ / CREATOR GATEWAY</span><button type="button" data-close aria-label="Close Creator Gateway">✕</button></div>
+  <div class="gateway-hero"><span class="eyebrow">YOUR TOOLS. YOUR IDEAS. YOUR SLICE.</span><h2 id="gateway-heading">Made anywhere.<br><em>Playable here.</em></h2><p>Bring your interactive experience to slice*. Start with a published URL today.</p></div>
+  <div class="gateway-options" role="group" aria-label="Project source">
+  <button type="button" data-source="github"><small>01 / PUBLIC REPO IMPORT</small><strong>Import from GitHub ↗</strong><span>Coming soon</span></button>
+  <button type="button" data-source="url"><small>02 / AVAILABLE NOW</small><strong>Import from URL</strong><span>Import a published web experience</span></button>
+  <button type="button" data-source="upload"><small>03 / LOCAL PROJECT</small><strong>Upload Project</strong><span>Coming soon</span></button></div>
+  <section class="gateway-panel"><h3 id="gateway-source-title"></h3><p id="gateway-unavailable"></p>
+  <form id="gateway-source-form"><label for="gateway-source-url">Interactive Project URL</label><div class="gateway-input-row"><input id="gateway-source-url" type="url" required placeholder="https://example.com/play.html"><button class="dark" type="submit">Check & preview →</button></div><p>Public HTTPS URL · No login required · Must run in a browser</p><small>Import a work you own or have permission to publish. V1 supports self-contained HTML, up to 300 KB.</small></form>
+  <p id="gateway-status" role="status" aria-live="polite"></p></section>
+  <section id="gateway-preflight" hidden><h3>Preflight results</h3><div id="gateway-checks"></div><div id="gateway-fix" hidden><h4>How to make it compatible</h4><p>Ask your AI coding tool to adapt the original project, redeploy it, then try again.</p><button type="button" id="gateway-copy-fix">Copy Make this Slice-ready prompt</button></div>
+  <div id="gateway-ready" hidden><p>Try the main interaction below. Detection cannot guarantee that your experience works.</p><div id="gateway-preview"></div><label>Slice title<input id="gateway-title" maxlength="80"></label><label>Short description<textarea id="gateway-description" maxlength="160">Try this interactive experience.</textarea></label><label class="gateway-confirm"><input type="checkbox" id="gateway-confirm"> I tested the preview and confirmed the main interaction works.</label><p id="gateway-publish-scope">Published Slices are saved in this browser and appear in Discover.</p><button class="dark" type="button" id="gateway-publish" disabled>Publish locally →</button></div></section>
+  <section class="gateway-ai"><h3>Creating with AI?</h3><p>Give your coding tool a head start with a Slice-ready brief.</p><button type="button" id="gateway-copy-prompt">Copy Slice-ready prompt</button><textarea id="gateway-copy-fallback" aria-label="Prompt to copy" hidden readonly></textarea></section>
+  <details class="gateway-compatibility"><summary>View requirements</summary><h4>Works best</h4><p>Self-contained HTML/CSS/JS · Inline Canvas / WebGL · Embedded images · Immediate interactions. React + Vite projects must first be exported as a single static HTML file.</p><h4>Not supported yet</h4><p>External scripts or API requests · Embedded pages · Backend servers · Databases or login · Private API keys · Service workers · GitHub builds · ZIP / object storage uploads</p></details>
+  <details class="gateway-pipeline"><summary>From your project to a Slice</summary><p>Source Acquisition → Detect → Validate → Security Check → Preview → Publish → Slice</p></details>
+  <div class="gateway-footer"><span>Or start with a playable template.</span><button type="button" id="gateway-draft">Continue local draft</button><button type="button" id="gateway-template">Try a playable template</button></div>`;
   document.body.append(gateway);
-  let source = 'github', destination = '';
-  function openEditor(mode) {
-    gateway.close(); legacyOpen();
-    if (mode) setCreationMode(mode);
-    if (destination) updateSlaceOptions(destination);
-  }
-  const input = gateway.querySelector('input');
-  const status = gateway.querySelector('#gateway-status');
-  function selectSource(next) {
-    source = next;
-    gateway.querySelectorAll('[data-source]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.source === source)));
-    gateway.querySelector('#gateway-source-title').textContent = {github:'Import from GitHub',upload:'Upload Project',url:'Import from URL'}[source];
-    gateway.querySelector('form').hidden = source === 'upload';
-    gateway.querySelector('#gateway-upload').hidden = source !== 'upload';
-    gateway.querySelector('label').textContent = source === 'github' ? 'GitHub Repository URL' : 'Interactive Project URL';
-    input.placeholder = source === 'github' ? 'https://github.com/you/interactive-project' : 'https://example.com/play';
-    gateway.querySelector('[type="submit"]').textContent = source === 'github' ? 'Check repository URL →' : 'Check experience URL →';
-    gateway.querySelector('#gateway-source-help').textContent = source === 'github' ? 'Paste a repository URL. URL checks are available now; repository access, framework detection, and remote builds are not connected yet.' : 'Enter an HTTPS interactive experience you own or have permission to publish. Server-side embed and runtime validation are required. This check does not publish or proxy the site.';
-    input.value = ''; status.textContent = '';
-  }
-  function openGateway() {
-    if (publishDialog.open) publishDialog.close();
-    selectSource('github');
-    destination = !slacePage.hidden && joinedSlaces.has(currentSlace) ? currentSlace : '';
-    if (!gateway.open) gateway.showModal();
-  }
-  gateway.querySelector('[data-close]').onclick = ()=>gateway.close();
+  const $=s=>gateway.querySelector(s);let preview=null,revision=0,controller=null,destination='';
+  const status=$('#gateway-status');
+  function reset(){revision++;controller?.abort();preview=null;$('#gateway-preflight').hidden=true;$('#gateway-preview').replaceChildren();$('#gateway-confirm').checked=false;$('#gateway-publish').disabled=true;}
+  function selectSource(source){reset();gateway.querySelectorAll('[data-source]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.source===source)));$('#gateway-source-title').textContent={github:'Import from GitHub',url:'Import from URL',upload:'Upload Project'}[source];$('#gateway-source-form').hidden=source!=='url';$('#gateway-unavailable').hidden=source==='url';$('#gateway-unavailable').textContent=source==='github'?'Public repository import · Coming soon. Use a deployed, self-contained HTML URL for now.':'Coming soon. ZIP and local project uploads are not available yet.';status.textContent='';}
+  async function copy(text){try{await navigator.clipboard.writeText(text);status.textContent='Prompt copied.';}catch{const field=$('#gateway-copy-fallback');field.hidden=false;field.value=text;field.focus();field.select();status.textContent='Select and copy the prompt below.';}}
+  $('#gateway-copy-prompt').onclick=()=>copy(prompt);$('#gateway-copy-fix').onclick=()=>copy(preview?.fix_prompt||prompt);
   gateway.querySelectorAll('[data-source]').forEach(b=>b.onclick=()=>selectSource(b.dataset.source));
-  gateway.querySelector('form').onsubmit = e=>{
-    e.preventDefault();
-    try {
-      const url = new URL(input.value.trim());
-      if (url.protocol !== 'https:' || url.username || url.password || url.port) throw Error('Use an HTTPS URL without credentials or a custom port.');
-      if (source === 'github' && (url.hostname !== 'github.com' || !/^\/[a-zA-Z0-9-]+\/[a-zA-Z0-9_.-]+\/?$/.test(url.pathname) || url.search || url.hash)) throw Error('Use a repository URL: https://github.com/owner/repository.');
-      status.textContent = source === 'github' ? 'URL format looks good. GitHub is not connected: no repository has been read, detected, built, or published. OAuth and repository import are needed to continue.' : 'URL format looks good. Accessibility and embed permission have not been verified. Preview and publishing require the URL import service.';
-    } catch (error) { status.textContent = error instanceof TypeError ? 'Enter a valid HTTPS URL.' : error.message; }
+  $('#gateway-source-url').oninput=()=>reset();
+  $('#gateway-source-form').onsubmit=async event=>{
+    event.preventDefault();reset();const current=revision;controller=new AbortController();status.textContent='Checking source, compatibility and security…';const submit=$('[type="submit"]');submit.disabled=true;
+    try{
+      const url=new URL($('#gateway-source-url').value.trim());if(url.protocol!=='https:')throw Error('Use a public HTTPS URL.');
+      const response=await fetch('/api/import/url',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',body:JSON.stringify({url:url.href}),signal:controller.signal});
+      const result=await response.json();if(current!==revision)return;if(!response.ok)throw Error(result.error||'Import failed.');preview=result;
+      $('#gateway-preflight').hidden=false;$('#gateway-checks').replaceChildren();
+      for(const check of result.checks){const row=document.createElement('p');row.textContent=`${check.status==='pass'?'✓':check.status==='fail'?'✕':'—'} ${check.name} — ${check.detail}`;$('#gateway-checks').append(row);}
+      $('#gateway-fix').hidden=result.status==='preview';$('#gateway-ready').hidden=result.status!=='preview';
+      if(result.status==='preview'){$('#gateway-preview').innerHTML=SliceRuntime.frame(result.version.html,result.title);$('#gateway-title').value=result.title;status.textContent='Ready to preview. Test your experience before publishing.';}else status.textContent='Almost ready. Follow the compatibility guidance below.';
+    }catch(error){if(current!==revision||error.name==='AbortError')return;status.textContent=error.message;$('#gateway-preflight').hidden=false;$('#gateway-checks').textContent='✕ Source — '+error.message;$('#gateway-ready').hidden=true;$('#gateway-fix').hidden=false;preview={fix_prompt:prompt+'\nResolve this import error: '+error.message};}
+    finally{submit.disabled=false;}
   };
-  const legacyOpen = openCreator;
-  // Explicit work/remix callers retain their editor. The general Creator entry opens Gateway.
-  openCreator = function(work) { if (work) legacyOpen(work); else openGateway(); };
-  gateway.querySelector('#gateway-open-upload').onclick = ()=>{
-    openEditor('html');
+  $('#gateway-confirm').onchange=()=>{$('#gateway-publish').disabled=!$('#gateway-confirm').checked;};
+  $('#gateway-publish').onclick=async()=>{
+    const button=$('#gateway-publish');button.disabled=true;status.textContent='Publishing your Slice…';
+    try{const work=await (window.SliceCloudPublishing||SliceImportRepository).publish(preview,{title:$('#gateway-title').value,description:$('#gateway-description').value},$('#gateway-confirm').checked);if(!works.some(w=>w.id===work.id))works.unshift(work);searchQuery='';selected='All';const search=document.querySelector('#slice-search');if(search)search.value='';document.querySelectorAll('[data-cat]').forEach(b=>{b.classList.toggle('selected',b.dataset.cat==='All');b.setAttribute('aria-pressed',String(b.dataset.cat==='All'));});render();gateway.close();toast(work.local?'Published locally. Find your Slice in Discover.':'Published. Your Slice is now visible to everyone.');document.querySelector('#card-'+work.id)?.scrollIntoView({block:'center'});}catch(error){status.textContent='Could not publish: '+error.message;}finally{button.disabled=!$('#gateway-confirm').checked;}
   };
-  gateway.querySelector('#gateway-draft').onclick = ()=>openEditor();
-  gateway.querySelector('#gateway-template').onclick = ()=>openEditor('template');
-  const back = document.createElement('button');
-  back.type='button'; back.className='gateway-back'; back.textContent='← Choose import source'; back.onclick=openGateway;
-  publishDialog.querySelector('.dialog-head').prepend(back);
-  modes.hidden = false;
-  document.querySelector('#publish-heading').textContent='Prepare your playable Slice';
-  publishDialog.querySelector('h2+p').textContent='Try your experience and tell people what they can play and explore.';
-  const entry = document.querySelector('#publish-entry');
-  entry.textContent='＋ Creator'; entry.onclick=openGateway;
-  if (new URLSearchParams(location.search).has('create')) openGateway();
-  // Put project identity first, with advanced delivery settings below the upload.
+  const legacyOpen=openCreator;
+  function openGateway(){if(publishDialog.open)publishDialog.close();selectSource('github');destination=!slacePage.hidden&&joinedSlaces.has(currentSlace)?currentSlace:'';if(!gateway.open)gateway.showModal();}
+  function openEditor(mode){gateway.close();legacyOpen();if(mode)setCreationMode(mode);if(destination)updateSlaceOptions(destination);}
+  openCreator=function(work){if(work)legacyOpen(work);else openGateway();};
+  $('[data-close]').onclick=()=>gateway.close();gateway.addEventListener('close',reset);
+  $('#gateway-draft').onclick=()=>openEditor();$('#gateway-template').onclick=()=>openEditor('template');
+  // Retain existing drafts/templates, but local file acquisition is not open in V1.
+  document.querySelector('[data-mode="html"]').disabled=true;document.querySelector('[data-mode="html"] span').textContent='Coming soon';
+  document.querySelector('#work-file').disabled=true;drop.ondrop=e=>e.preventDefault();
+  const back=document.createElement('button');back.type='button';back.className='gateway-back';back.textContent='← Choose import source';back.onclick=openGateway;publishDialog.querySelector('.dialog-head').prepend(back);
+  const entry=document.querySelector('#publish-entry');entry.textContent='＋ Creator';entry.onclick=openGateway;
   const fields=publishDialog.querySelector('.publish-fields');
-  const title=publishForm.elements.title.closest('label');
-  const description=publishForm.elements.description.closest('label');
   const heading=document.createElement('h3');heading.className='project-section-title';heading.textContent='Project details';
-  fields.prepend(heading,title,description);
-  const settings=document.createElement('details');settings.className='project-settings';settings.open=true;
-  settings.innerHTML='<summary>Project settings</summary>';
-  fields.append(settings);
+  fields.prepend(heading,publishForm.elements.title.closest('label'),publishForm.elements.description.closest('label'));
+  const settings=document.createElement('details');settings.className='project-settings';settings.open=true;settings.innerHTML='<summary>Project settings</summary>';fields.append(settings);
   for(const name of ['category','author'])settings.append(publishForm.elements[name].closest('label'));
   settings.append(deliveryFields);
-  publishForm.elements.title.placeholder='Give your project a title';
-  publishForm.elements.description.placeholder='What can people do, play, or explore?';
+  publishForm.elements.title.placeholder='Give your project a title';publishForm.elements.description.placeholder='What can people do, play, or explore?';
+  if(new URLSearchParams(location.search).has('create'))openGateway();
 })();

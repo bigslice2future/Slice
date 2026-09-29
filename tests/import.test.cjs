@@ -20,4 +20,4 @@ test('redirect to DNS-private host is rejected before a second socket; final pub
  await assert.rejects(acquireURL('https://example.com',{lookup:async()=>[{address:'93.184.216.34',family:4},{address:'::1',family:6}]}),/private/);
  count=0;const p=await acquireURL('https://example.com',{lookup,request:async()=>count++?{html,bytes:html.length}:{redirect:'/final'}});assert.equal(p.source_url,'https://example.com/');assert.equal(p.resolved_url,'https://example.com/final');
 });
-test('GitHub and upload adapters cannot acquire or execute a project',async()=>{for(const source_type of ['github','upload'])await assert.rejects(importSource({source_type}),/Coming soon/);});
+test('GitHub adapter cannot acquire or execute a project',async()=>{await assert.rejects(importSource({source_type:'github'}),/Coming soon/);});

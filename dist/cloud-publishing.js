@@ -15,7 +15,7 @@
   window.SliceCloudPublishing={async publish(preview,details,confirmed){
    if(!confirmed||preview?.status!=='preview'||!preview.version)throw Error('Test and confirm the preview first.');
    const {data:{session}}=await client.auth.getSession();if(!session)throw Error('Sign in using the Account button, then import and confirm your experience.');
-   const response=await fetch(window.SLICE_ACCOUNT_CONFIG.url+'/functions/v1/publish-slice',{method:'POST',headers:{'Content-Type':'application/json',apikey:window.SLICE_ACCOUNT_CONFIG.publishableKey,Authorization:'Bearer '+session.access_token},body:JSON.stringify({url:preview.source.source_url,preview_hash:preview.version.content_hash,request_id:preview.version.id,title:details.title,description:details.description,confirmed:true})});
+   const response=await fetch(window.SLICE_ACCOUNT_CONFIG.url+'/functions/v1/publish-slice',{method:'POST',headers:{'Content-Type':'application/json',apikey:window.SLICE_ACCOUNT_CONFIG.publishableKey,Authorization:'Bearer '+session.access_token},body:JSON.stringify({source_type:preview.source.source_type,...(preview.source.source_type==='upload'?{html:preview.version.html}:{url:preview.source.source_url}),preview_hash:preview.version.content_hash,request_id:preview.version.id,title:details.title,description:details.description,confirmed:true})});
    const result=await response.json();if(!response.ok)throw Error(result.error||'Publishing failed. Try again.');
    const {data,error}=await client.from('public_slices').select('*').eq('id',result.id).single();if(error)throw Error('Published, but reload Discover to see it.');return project(data);
   }};
@@ -24,5 +24,5 @@
   document.querySelector('#gateway-publish-scope').textContent='Sign in to publish. After confirmation, your experience will be visible to everyone in Discover and shareable by link.';
  }
  window.addEventListener('slice-cloud-loaded',()=>{if(libraryDialog.open)renderLibrary();});
- void load();
+ if(!isLocal)void load();
 })();

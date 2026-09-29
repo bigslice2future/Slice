@@ -2,8 +2,8 @@
 export type ImportSource =
   | { source_type: 'url'; source_url: string }
   | { source_type: 'github'; repo_url: string; owner: string; repo: string; branch?: string; commit_sha?: string }
-  | { source_type: 'upload'; upload_key: string; filename: string };
-export interface Artifact { html: string; bytes: number; source_url: string; resolved_url: string }
+  | { source_type: 'upload'; html: string; filename?: string; upload_key?: string };
+export interface Artifact { html: string; bytes: number; source_url: string | null; resolved_url: string | null }
 export interface SliceSource {
   id: string; slice_id: string; source_type: ImportSource['source_type'];
   source_url?: string; resolved_url?: string; repo_url?: string;

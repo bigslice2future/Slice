@@ -46,10 +46,12 @@ const url=process.env.SLICE_TEST_URL||'http://127.0.0.1:4193/';
  console.log('PASS: Library, following, account dialog, share, and Space publishing destination');
  // URL Import V1: real API fetch, isolated preview, explicit confirm and durable publish.
  await page.locator('#publish-entry').click();
+ await expect(page.locator('#gateway-upload-form')).toBeVisible();
+ await page.locator('[data-source="github"]').click();
  await expect(page.locator('#gateway-unavailable')).toContainText('Coming soon');
  await expect(page.locator('#gateway-source-form')).toBeHidden();
  await page.locator('[data-source="upload"]').click();
- await expect(page.locator('#gateway-unavailable')).toContainText('not available yet');
+ await expect(page.locator('#gateway-upload-form')).toBeVisible();
  await page.locator('[data-source="url"]').click();
  await page.locator('#gateway-source-url').fill('http://example.com');await page.locator('#gateway-source-form [type="submit"]').click();await expect(page.locator('#gateway-status')).toContainText('HTTPS');
  await page.locator('#gateway-source-url').fill('https://127.0.0.1');await page.locator('#gateway-source-form [type="submit"]').click();await expect(page.locator('#gateway-status')).toContainText('Private');

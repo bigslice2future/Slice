@@ -72,7 +72,15 @@ async function acquireURL(value, options={}) {
 }
 async function acquireSource(source,options){
   if(source.source_type==='url')return acquireURL(source.source_url,options);
-  if(['github','upload'].includes(source.source_type))throw Error('Coming soon. This source adapter is not available yet.');
+  if(source.source_type==='upload'){
+    if(typeof source.html!=='string'||!source.html.trim())throw Error('Choose an HTML file or paste your HTML code.');
+    const bytes=Buffer.byteLength(source.html,'utf8');
+    if(bytes>MAX_BYTES)throw Error('HTML must be smaller than 300 KB.');
+    if(source.filename && !/\.html?$/i.test(source.filename))throw Error('Choose a .html file. ZIP and project folders are coming soon.');
+    if(!/<(?:!doctype\s+html|html|head|body|button|canvas|div|script|svg)\b/i.test(source.html)||source.html.includes('\0'))throw Error('This does not look like an HTML document.');
+    return {html:source.html,bytes,source_url:null,resolved_url:null};
+  }
+  if(source.source_type==='github')throw Error('Coming soon. This source adapter is not available yet.');
   throw Error('Unsupported source type.');
 }
 module.exports={acquireSource,acquireURL,publicIP,validateURL,requestPage,MAX_BYTES};

@@ -14,4 +14,8 @@ Deploy the feature branch and verify the Vercel build before production promotio
 
 Configure platform rate limits/abuse monitoring before a broad launch. Cloud publication is authenticated, re-acquires and hashes the source, and limits each account to 20 publications per day and 100 total. GitHub requires an isolated worker; ZIP requires object storage and validation. Neither is enabled.
 
-Deployment progress, 2026-09-28: both import/publication SQL migrations executed successfully in the Slice project. Edge Function and Vercel release still pending verification.
+Deployment progress, 2026-09-28: both import/publication SQL migrations executed successfully in the Slice project. The publish-slice Edge Function and Vercel production release (98644931) are deployed. Production URL import and sandbox interaction passed; signed-in cloud publication passed on 2026-09-29. An independent anonymous browser verified the public link, interaction, refresh, Library save and replay. Anonymous requests cannot write the tables or call the publication RPC.
+
+## HTML upload update
+
+Apply `202609290001_html_upload.sql`, then redeploy `publish-slice` with the updated code. This preserves URL publication and allows verified `upload` sources. Deploy the frontend/API together after the service update. No new environment variables or storage bucket are needed. HTML payloads are bounded to 300 KiB; JSON envelopes are bounded to 2 MiB for escaped characters.

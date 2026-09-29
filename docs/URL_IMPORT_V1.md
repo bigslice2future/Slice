@@ -69,7 +69,7 @@ Unit tests cover successful HTTPS HTML, illegal protocols/credentials, private I
 5. Enter a title; check the preview confirmation; **Publish to Slice** (or **Publish locally** on localhost).
 6. Find the card in Discover, save to Library, refresh, and reopen.
 
-For a sample you control, this repo also serves `/sample-interactive.html`. After deployment, import `https://YOUR-DEPLOYMENT/sample-interactive.html`. The old `slice-jade.vercel.app` host timed out from this environment during verification; it is not used as evidence of success.
+For a sample you control, this repo also serves `/sample-interactive.html`. After deployment, import `https://YOUR-DEPLOYMENT/sample-interactive.html`. The production test URL is `https://slice-jade.vercel.app/sample-interactive.html`; its import and sandbox interaction have been verified online.
 
 ## Changed files / verification record
 
@@ -79,4 +79,4 @@ For a sample you control, this repo also serves `/sample-interactive.html`. Afte
 - Run/build/test: `package.json`, `pnpm-lock.yaml`, `vercel.json`, `scripts/dev.cjs`, `scripts/check.cjs`, `scripts/browser-check.cjs`, `tests/*.test.cjs`.
 - Documentation: README, DEPLOYMENT, this guide; historical prototype documents link here for current behavior.
 
-Verified locally on 2026-09-28: `pnpm build`, `pnpm check`, all 14 unit/API/repository/cloud-function tests and the complete Chrome browser regression passed. The browser run used the actual Node API and a public MDN HTTPS document, not a mocked import response. It exercised the imported button, confirmation, publication, refresh and Library replay. Desktop/mobile gateway overflow checks passed. Expected blocked-fetch CSP messages are not runtime failures. The two Supabase import/publication migrations have since been applied successfully; production deployment and cloud browser verification are pending.
+Verified locally on 2026-09-28: `pnpm build`, `pnpm check`, all 14 unit/API/repository/cloud-function tests and the complete Chrome browser regression passed. The browser run used the actual Node API and a public MDN HTTPS document, not a mocked import response. It exercised the imported button, confirmation, publication, refresh and Library replay. Desktop/mobile gateway overflow checks passed. Expected blocked-fetch CSP messages are not runtime failures. The two Supabase import/publication migrations and publish-slice Edge Function are deployed. PR #3 was merged and Vercel production succeeded (98644931). Production MDN and same-site sample imports return preview; private IP and illegal protocols are rejected. Native Chrome verified the sample interaction. Anonymous table writes and publication RPC calls are denied. Signed-in cloud publication passed on 2026-09-29. An independent anonymous browser verified the published link, sandbox interaction, refresh, Library save and replay. Demo: https://slice-jade.vercel.app/#work=fe2f153b-a6e2-43b0-949f-8157e138bf43

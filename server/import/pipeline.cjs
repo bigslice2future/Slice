@@ -1,7 +1,7 @@
 const {parse}=require('parse5');
 const {createHash,randomUUID}=require('node:crypto');
 const {acquireSource}=require('./acquire.cjs');
-const PROMPT='Create a Slice-ready, browser-only interactive experience using HTML/CSS/JS or React + Vite with a static build. For URL Import V1, export one self-contained HTML file with inline CSS and JavaScript and data: assets. No backend, database, login, private API keys, external network, external scripts, iframes, service workers, popups, downloads or navigation. Make it responsive and ensure the main interaction works immediately. Preserve the core experience and provide a public HTTPS deployment returning text/html.';
+const PROMPT='Create a Slice-ready, browser-only interactive experience using HTML/CSS/JS or React + Vite with a static build. Export one self-contained HTML file with inline CSS and JavaScript and data: assets. No backend, database, login, private API keys, external network, external scripts, iframes, service workers, popups, downloads or navigation. Make it responsive and ensure the main interaction works immediately. Preserve the core experience and return a downloadable index.html for direct upload to Slice.';
 function inspect(html){
   const issues=new Set();let interactive=false,title='Imported experience';
   const doc=parse(html);
@@ -34,7 +34,7 @@ async function importSource(source,options){
   const detected=inspect(acquired.html);
   const ready=detected.issues.length===0;
   return {status:ready?'preview':'unsupported',title:detected.title,
-    checks:[{name:'Source',status:'pass',detail:'Public HTML acquired.'},{name:'Browser compatibility',status:detected.interactive?'pass':'fail',detail:'Try the controls in the preview to confirm they work.'},{name:'Security',status:ready?'pass':'fail',detail:ready?'No unsupported features found. The preview runs with restricted permissions.':detected.issues.join(' ')},{name:'Runtime',status:ready?'pass':'blocked',detail:'Isolated preview ready. External connections and sensitive permissions are blocked.'}],
+    checks:[{name:'Source',status:'pass',detail:source.source_type==='upload'?'HTML received. No hosting required.':'Public HTML acquired.'},{name:'Browser compatibility',status:detected.interactive?'pass':'fail',detail:'Try the controls in the preview to confirm they work.'},{name:'Security',status:ready?'pass':'fail',detail:ready?'No unsupported features found. The preview runs with restricted permissions.':detected.issues.join(' ')},{name:'Runtime',status:ready?'pass':'blocked',detail:'Isolated preview ready. External connections and sensitive permissions are blocked.'}],
     issues:detected.issues,fix_prompt:PROMPT+'\nFix these detected issues:\n'+detected.issues.join('\n'),
     source:{id:randomUUID(),source_type:source.source_type,source_url:acquired.source_url,resolved_url:acquired.resolved_url,repo_url:null,owner:null,repo:null,branch:null,commit_sha:null},
     version:ready?{id:randomUUID(),version:1,html:acquired.html,content_hash:createHash('sha256').update(acquired.html).digest('hex'),runtime_metadata:{type:'sandboxed-srcdoc',policy_version:1,bytes:acquired.bytes},created_at:new Date().toISOString()}:null};

@@ -13,15 +13,16 @@ Deno.serve(async(req:Request)=>{
   const session=await fetch(project+'/auth/v1/user',{headers:{apikey:serviceKey,Authorization:auth},signal:AbortSignal.timeout(5000)});
   if(!session.ok)return reply(401,{error:'Sign in again before publishing.'});
   const user=await session.json();if(!user.id)return reply(401,{error:'Sign in before publishing.'});
-  if(Number(req.headers.get('content-length'))>4096)return reply(413,{error:'Request too large.'});
+  if(Number(req.headers.get('content-length'))>2097152)return reply(413,{error:'Request too large.'});
   const reader=req.body?.getReader();if(!reader)return reply(400,{error:'Missing request.'});
   const chunks:Uint8Array[]=[];let size=0;
-  while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>4096){await reader.cancel();return reply(413,{error:'Request too large.'});}chunks.push(value);}
+  while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>2097152){await reader.cancel();return reply(413,{error:'Request too large.'});}chunks.push(value);}
   const raw=new Uint8Array(size);let offset=0;for(const c of chunks){raw.set(c,offset);offset+=c.length;}
   const body=JSON.parse(new TextDecoder().decode(raw));
-  if(typeof body.url!=='string'||body.url.length>2048||typeof body.title!=='string'||!body.title.trim()||body.title.length>80||typeof body.description!=='string'||body.description.length>160||!/^([a-f0-9]{64})$/.test(body.preview_hash)||!/^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(body.request_id)||body.confirmed!==true)return reply(400,{error:'Test and confirm a valid preview before publishing.'});
+  const isUpload=body.source_type==='upload';
+  if((body.source_type!==undefined&&!['url','upload'].includes(body.source_type))||(isUpload?(typeof body.html!=='string'||new TextEncoder().encode(body.html).length>307200):(typeof body.url!=='string'||body.url.length>2048))||typeof body.title!=='string'||!body.title.trim()||body.title.length>80||typeof body.description!=='string'||body.description.length>160||!/^([a-f0-9]{64})$/.test(body.preview_hash)||!/^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/.test(body.request_id)||body.confirmed!==true)return reply(400,{error:'Test and confirm a valid preview before publishing.'});
   // Only this fixed trusted endpoint may acquire URLs; no user-selected proxy.
-  const imported=await fetch('https://slice-jade.vercel.app/api/import/url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:body.url}),signal:AbortSignal.timeout(12000)});
+  const imported=await fetch('https://slice-jade.vercel.app/api/import/'+(isUpload?'upload':'url'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(isUpload?{html:body.html}:{url:body.url}),signal:AbortSignal.timeout(12000)});
   if(!imported.ok)return reply(422,{error:'Could not recheck the source. Please run the preview again.'});
   const preview=await imported.json();
   if(preview.status!=='preview'||!preview.version)return reply(422,{error:'The source no longer passes compatibility checks. Import it again.'});

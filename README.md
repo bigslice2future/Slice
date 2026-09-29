@@ -30,9 +30,9 @@ Set `BROWSER_EXECUTABLE` if using an installed Chromium/Chrome executable instea
 ## Product scope
 
 - Playable experiences only: games, simulations, experiments, creative tools, and interactive applications.
-- Creator Gateway prioritizes GitHub (Coming soon), followed by real URL import and Upload Project (Coming soon). URL imports receive server-side security checks and an isolated preview before explicit creator confirmation.
+- Creator Gateway starts with Upload HTML (file or pasted code), followed by URL import and GitHub (Coming soon). URL imports receive server-side security checks and an isolated preview before explicit creator confirmation.
 - Local publication uses a normalized browser repository. Imported Slices appear in Discover, can be saved to Library and replayed after refresh. Production uses authenticated cloud publication and a public Discover feed.
-- GitHub builds and ZIP/local-file acquisition are disabled. Six playable templates and existing drafts remain available.
+- GitHub builds and ZIP/project-folder acquisition are disabled. Single HTML files up to 300 KiB are supported. Six playable templates and existing drafts remain available.
 - Standalone image, text, document, and video posts are not supported. Images and text can still be assets inside an interactive experience.
 - All built-in product copy and demo content are English. User-authored titles, comments, updates, and imported projects retain their original language.
 

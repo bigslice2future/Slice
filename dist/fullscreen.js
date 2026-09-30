@@ -50,7 +50,9 @@
     toggle.textContent = '↙ Exit full screen';
     toggle.setAttribute('aria-pressed', 'true');
     hint.hidden = false;
-    toggle.focus({preventScroll: true});
+    // Send gameplay keys to the game, not the exit button.
+    stage.tabIndex = -1;
+    (stage.querySelector('iframe') || stage).focus({preventScroll: true});
     window.dispatchEvent(new Event('resize'));
     const id = ++requestId;
     if (panel.requestFullscreen && document.fullscreenEnabled) {
@@ -64,6 +66,12 @@
         }).catch(() => { /* Keep the usable page-filling mode if fullscreen is denied. */ });
       } catch (_) { /* Older browsers still get page-filling mode. */ }
     }
+  }
+  // Space belongs to gameplay; Enter and pointer clicks still activate this button.
+  for (const type of ['keydown', 'keyup']) {
+    toggle.addEventListener(type, event => {
+      if (expanded && (event.code === 'Space' || event.key === ' ')) event.preventDefault();
+    });
   }
   toggle.addEventListener('click', () => expanded ? leave() : enter());
   document.addEventListener('fullscreenchange', () => {

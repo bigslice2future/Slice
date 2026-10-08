@@ -9,3 +9,5 @@ Apply `supabase/migrations/202610080001_creator_accounts.sql` before deploying t
 The Trophy section and public trophy shelf are reserved UI positions. No trophies are invented or awarded. A later system should provide server-owned definitions and awards with public read access; clients must never write awards themselves.
 
 Validation: 23 automated tests (including account changes, logout during writes, duplicate clicks and ambiguous failures), static checks and Cloud Library checks. Browser tests with a local test adapter cover profile name/photo save, public creator page, update publish/delete/undo, Slice delete/restore, sign-out and 390 px layout. This test adapter is not shipped.
+
+The header account control is an avatar only (a neutral user icon when no photo is set). Sign-out opens a minimal email/password login card on a plain background. Email links remain available; Forgot password sends a recovery link for users who signed up without a password. PASSWORD_RECOVERY displays a password form; credentials are sent only to Supabase Auth, cleared from the form after submission and never persisted by app code.

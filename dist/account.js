@@ -51,7 +51,7 @@
   try {
     const config = window.SLICE_ACCOUNT_CONFIG;
     client = window.supabase.createClient(config.url, config.publishableKey);
-    window.SliceAccount={client,open:openAccount};
+    window.SliceAccount={client,open:openAccount,get user(){return user;}};
     store = new CloudLibraryStore({
       async list(owner){
         const all = []; let offset = 0;
@@ -73,13 +73,14 @@
       profile.textContent = user ? 'Account' : 'Sign in';
       profile.setAttribute('aria-label',user ? 'Your Slice account' : 'Sign in to Slice');
       form.hidden = !!user; panel.querySelector('#account-signed-in').hidden = !user;
-      panel.querySelector('#account-identity').textContent = user?.email || '';
+      const identity=panel.querySelector('#account-identity');if(identity)identity.textContent = user?.email || '';
       panel.querySelector('#account-description').textContent = user ? 'Your published discoveries can now follow you across devices.' : 'Sign in with an email link. New here? The same link creates your account.';
       message(user ? 'Signed in. Open Library to check sync status.' : '');
       // Clear the old account immediately; perform requests outside the SDK auth lock.
       if (store.userId !== (user?.id || null)) {
         store.userId = null; store.ids = new Set(); ++store.epoch; store.phase = 'guest'; refreshViews();
       }
+      window.dispatchEvent(new CustomEvent('slice-account-changed',{detail:{user}}));
       const nextId = user?.id || null;
       setTimeout(() => { if ((user?.id || null) === nextId) void store.setUser(nextId); },0);
     }

@@ -2,7 +2,8 @@
 (() => {
  const client=window.SliceAccount?.client;if(!client)return;
  const isLocal=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
- function project(row){return {id:row.id,title:row.title,desc:row.description,author:row.author,asset:row.html,assetType:'html',contentType:'interactive',local:false,template:'beat',cat:'Creative',bg:'#dfff85',time:'Published',likes:0,plays:'0'};}
+ function project(row){return {id:row.id,title:row.title,desc:row.description,author:row.author,creatorId:row.creator_id,authorAvatar:row.author_avatar||'',cloud:true,asset:row.html,assetType:'html',contentType:'interactive',local:false,template:'beat',cat:'Creative',bg:'#dfff85',time:'Published',likes:0,plays:'0'};}
+ window.SliceCloudProject=project;
  async function load(){
   const {data,error}=await client.from('public_slices').select('*').order('created_at',{ascending:false}).limit(100);
   if(error){if(!isLocal)toast('Public Slices could not be loaded. Please refresh to retry.');return;}
